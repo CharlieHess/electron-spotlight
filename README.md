@@ -1,2 +1,2 @@
-# node-spotlight
-Add Spotlight items from Node.js!
+# electron-spotlight
+Add Spotlight items from Electron!

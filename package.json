@@ -1,7 +1,7 @@
 {
-  "name": "node-spotlight",
+  "name": "electron-spotlight",
   "version": "0.1.0",
-  "description": "Add items to macOS Spotlight from Node.js",
+  "description": "Add items to macOS Spotlight from Electron",
   "main": "index.js",
   "scripts": {
     "install": "node-gyp rebuild",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/CharlieHess/node-spotlight"
+    "url": "https://github.com/CharlieHess/electron-spotlight"
   },
   "os": [
     "darwin"
   ],
   "keywords": [
     "spotlight",
-    "node"
+    "electron"
   ],
   "author": "Charlie Hess",
   "devDependencies": {
