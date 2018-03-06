@@ -1,0 +1,27 @@
+{
+  "name": "node-spotlight",
+  "version": "0.1.0",
+  "description": "Add items to macOS Spotlight from Node.js",
+  "main": "index.js",
+  "scripts": {
+    "install": "node-gyp rebuild",
+    "build": "node-gyp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CharlieHess/node-spotlight"
+  },
+  "os": [
+    "darwin"
+  ],
+  "keywords": [
+    "spotlight",
+    "node"
+  ],
+  "author": "Charlie Hess",
+  "devDependencies": {
+    "nan": "^2.9.2",
+    "node-gyp": "^3.6.2"
+  },
+  "dependencies": {}
+}
