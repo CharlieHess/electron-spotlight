@@ -37,9 +37,16 @@ NAN_METHOD(AddItems) {
     NSString* identifier = [NSString stringWithUTF8String:*idString];
     NSString* title = [NSString stringWithUTF8String:*titleString];
 
+    NSImage* icon;
+    MaybeLocal<Value> handle = Nan::Get(inputItem, Nan::New("icon").ToLocalChecked());
+    if (handle.IsEmpty()) icon = nullptr;
+    if (Nan::Equals(handle.ToLocalChecked(), Nan::Undefined()).FromJust()) icon = nullptr;
+    if (icon != nullptr) icon = (NSImage*) node::Buffer::Data(handle.ToLocalChecked().As<Object>());
+
     CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc]
     initWithItemContentType:(NSString *)kUTTypeData];
     attributeSet.title = title;
+    if (icon != nullptr) attributeSet.thumbnailData = [icon TIFFRepresentation];
 
     CSSearchableItem *item = [[CSSearchableItem alloc]
       initWithUniqueIdentifier:identifier
