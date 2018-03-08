@@ -1,4 +1,6 @@
+#import <AppKit/AppKit.h>
 #import <CoreSpotlight/CoreSpotlight.h>
+#import <Foundation/Foundation.h>
 
 #include <nan.h>
 #include "spotlight.h"
@@ -37,16 +39,20 @@ NAN_METHOD(AddItems) {
     NSString* identifier = [NSString stringWithUTF8String:*idString];
     NSString* title = [NSString stringWithUTF8String:*titleString];
 
-    NSImage* icon;
-    MaybeLocal<Value> handle = Nan::Get(inputItem, Nan::New("icon").ToLocalChecked());
-    if (handle.IsEmpty()) icon = nullptr;
-    if (Nan::Equals(handle.ToLocalChecked(), Nan::Undefined()).FromJust()) icon = nullptr;
-    if (icon != nullptr) icon = (NSImage*) node::Buffer::Data(handle.ToLocalChecked().As<Object>());
-
     CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc]
     initWithItemContentType:(NSString *)kUTTypeData];
     attributeSet.title = title;
-    if (icon != nullptr) attributeSet.thumbnailData = [icon TIFFRepresentation];
+
+    NSImage* icon;
+    MaybeLocal<Value> iconHandle = Nan::Get(inputItem, Nan::New("icon").ToLocalChecked());
+    if (!iconHandle.IsEmpty()
+      && !Nan::Equals(iconHandle.ToLocalChecked(), Nan::Undefined()).FromJust()) {
+      Nan::Utf8String iconURLString(iconHandle.ToLocalChecked());
+      NSString* iconURL = [NSString stringWithUTF8String:*iconURLString];
+      NSURL* theURL = [[NSURL alloc] initWithString:iconURL];
+      icon = [[NSImage alloc] initWithContentsOfURL:theURL];
+      attributeSet.thumbnailData = [icon TIFFRepresentation];
+    }
 
     CSSearchableItem *item = [[CSSearchableItem alloc]
       initWithUniqueIdentifier:identifier
