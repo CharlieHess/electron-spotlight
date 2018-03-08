@@ -43,14 +43,10 @@ NAN_METHOD(AddItems) {
       initWithItemContentType:(NSString *)kUTTypeData];
     attributeSet.title = title;
 
-    NSImage* icon;
     MaybeLocal<Value> iconHandle = Nan::Get(inputItem, Nan::New("icon").ToLocalChecked());
     if (!iconHandle.IsEmpty()
       && !Nan::Equals(iconHandle.ToLocalChecked(), Nan::Undefined()).FromJust()) {
-      Nan::Utf8String iconURLString(iconHandle.ToLocalChecked());
-      NSString* iconURL = [NSString stringWithUTF8String:*iconURLString];
-      NSURL* theURL = [[NSURL alloc] initWithString:iconURL];
-      icon = [[NSImage alloc] initWithContentsOfURL:theURL];
+      NSImage* icon = (NSImage*) node::Buffer::Data(iconHandle.ToLocalChecked().As<Object>());
       attributeSet.thumbnailData = [icon TIFFRepresentation];
     }
 
