@@ -46,8 +46,10 @@ NAN_METHOD(AddItems) {
     MaybeLocal<Value> iconHandle = Nan::Get(inputItem, Nan::New("icon").ToLocalChecked());
     if (!iconHandle.IsEmpty()
       && !Nan::Equals(iconHandle.ToLocalChecked(), Nan::Undefined()).FromJust()) {
-      NSImage* icon = (NSImage*) node::Buffer::Data(iconHandle.ToLocalChecked().As<Object>());
-      attributeSet.thumbnailData = [icon TIFFRepresentation];
+      Nan::Utf8String iconURLString(iconHandle.ToLocalChecked());
+      NSString* iconURL = [NSString stringWithUTF8String:*iconURLString];
+      NSURL* theURL = [[NSURL alloc] initWithString:iconURL];
+      attributeSet.thumbnailData = [[NSData alloc] initWithContentsOfURL:theURL];
     }
 
     CSSearchableItem *item = [[CSSearchableItem alloc]
