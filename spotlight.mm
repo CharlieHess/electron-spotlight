@@ -3,6 +3,8 @@
 #include <nan.h>
 #include "spotlight.h"
 
+using namespace v8;
+
 NAN_METHOD(AddItems) {
   if (info.Length() < 1) {
     Nan::ThrowTypeError("Missing arguments");
@@ -14,15 +16,15 @@ NAN_METHOD(AddItems) {
     return;
   }
 
-  v8::Local<v8::Array> inputItems = v8::Local<v8::Array>::Cast(info[0]);
+  Local<Array> inputItems = Local<Array>::Cast(info[0]);
   NSMutableArray *items = [[NSMutableArray alloc] init];
 
   for (unsigned int i = 0; i < inputItems->Length(); i++ ) {
     if (!Nan::Has(inputItems, i).FromJust()) continue;
 
-    v8::Local<v8::Object> inputItem = Nan::Get(inputItems, i)
+    Local<Object> inputItem = Nan::Get(inputItems, i)
       .ToLocalChecked()
-      .As<v8::Object>();
+      .As<Object>();
 
     Nan::Utf8String idString(
       Nan::Get(inputItem, Nan::New("id").ToLocalChecked()
@@ -70,7 +72,7 @@ NAN_METHOD(RemoveItems) {
     return;
   }
 
-  v8::Local<v8::Array> inputIds = v8::Local<v8::Array>::Cast(info[0]);
+  Local<Array> inputIds = Local<Array>::Cast(info[0]);
   NSMutableArray *ids = [[NSMutableArray alloc] init];
 
   for (unsigned int i = 0; i < inputIds->Length(); i++ ) {
