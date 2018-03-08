@@ -1,6 +1,6 @@
 {
   "name": "electron-spotlight",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Add items to macOS Spotlight from Electron",
   "main": "index.js",
   "scripts": {
