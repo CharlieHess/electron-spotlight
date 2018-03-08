@@ -4,7 +4,7 @@
 #include "spotlight.h"
 
 NAN_METHOD(AddItem) {
-  if (info.Length() < 3) {
+  if (info.Length() < 2) {
     Nan::ThrowTypeError("Missing arguments");
     return;
   }
@@ -19,11 +19,6 @@ NAN_METHOD(AddItem) {
     return;
   }
 
-  if (!info[2]->IsFunction()) {
-    Nan::ThrowTypeError("Callback must be a function");
-    return;
-  }
-
   if (![CSSearchableIndex isIndexingAvailable]) {
     Nan::ThrowTypeError("Spotlight indexing unavailable");
     return;
@@ -31,7 +26,6 @@ NAN_METHOD(AddItem) {
 
   Nan::Utf8String idString(info[0]);
   Nan::Utf8String titleString(info[1]);
-  // Nan::Callback* successCallback = new Nan::Callback(info[2].As<v8::Function>());
 
   NSString* identifier = [NSString stringWithUTF8String:*idString];
   NSString* title = [NSString stringWithUTF8String:*titleString];
@@ -52,14 +46,44 @@ NAN_METHOD(AddItem) {
 
   [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[item]
     completionHandler: ^(NSError * __nullable error) {
-      if (error) {
-        Nan::ThrowTypeError("Unable to index item");
-        return;
+      if (!error) {
+        NSLog(@"Search item indexed");
+      } else {
+        NSLog(@"Indexing item failed: %@", error);
       }
-
-      // successCallback->Call(0, 0);
-      NSLog(@"Search item indexed");
   }];
 
   info.GetReturnValue().Set(Nan::Undefined());
+}
+
+NAN_METHOD(RemoveItems) {
+  if (info.Length() < 1) {
+    Nan::ThrowTypeError("Missing arguments");
+    return;
+  }
+
+  if (!info[0]->IsArray()) {
+    Nan::ThrowTypeError("Items must be an array");
+    return;
+  }
+
+  v8::Local<v8::Array> inputIds = v8::Local<v8::Array>::Cast(info[0]);
+  NSMutableArray *ids = [[NSMutableArray alloc] init];
+
+  for (unsigned int i = 0; i < inputIds->Length(); i++ ) {
+    if (!Nan::Has(inputIds, i).FromJust()) continue;
+
+    Nan::Utf8String identifier(Nan::Get(inputIds, i).ToLocalChecked());
+    NSString* nsIdentifier = [NSString stringWithUTF8String:*identifier];
+    [ids addObject:nsIdentifier];
+  }
+
+  [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:ids
+    completionHandler: ^(NSError * __nullable error) {
+      if (!error) {
+        NSLog(@"Removed items successfully");
+      } else {
+        NSLog(@"Removing item failed: %@", error);
+      }
+  }];
 }
