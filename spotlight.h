@@ -5,5 +5,6 @@
 
 NAN_METHOD(AddItems);
 NAN_METHOD(RemoveItems);
+NAN_METHOD(RemoveAllItems);
 
 #endif // SPOTLIGHT_INTEGRATION

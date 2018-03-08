@@ -20,6 +20,11 @@ NAN_MODULE_INIT(InitAll) {
     New<String>("removeItems").ToLocalChecked(),
     GetFunction(New<FunctionTemplate>(RemoveItems)).ToLocalChecked()
   );
+  Set(
+    target,
+    New<String>("removeAllItems").ToLocalChecked(),
+    GetFunction(New<FunctionTemplate>(RemoveAllItems)).ToLocalChecked()
+  );
 }
 
 NODE_MODULE(addon, InitAll)

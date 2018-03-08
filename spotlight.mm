@@ -40,7 +40,7 @@ NAN_METHOD(AddItems) {
     NSString* title = [NSString stringWithUTF8String:*titleString];
 
     CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc]
-    initWithItemContentType:(NSString *)kUTTypeData];
+      initWithItemContentType:(NSString *)kUTTypeData];
     attributeSet.title = title;
 
     NSImage* icon;
@@ -101,7 +101,17 @@ NAN_METHOD(RemoveItems) {
       if (!error) {
         NSLog(@"Removed items successfully");
       } else {
-        NSLog(@"Removing item failed: %@", error);
+        NSLog(@"Removing items failed: %@", error);
       }
+  }];
+}
+
+NAN_METHOD(RemoveAllItems) {
+  [[CSSearchableIndex defaultSearchableIndex] deleteAllSearchableItemsWithCompletionHandler:^(NSError * __nullable error) {
+    if (!error) {
+      NSLog(@"Removed all items");
+    } else {
+      NSLog(@"Removing items failed: %@", error);
+    }
   }];
 }
