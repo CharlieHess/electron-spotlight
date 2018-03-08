@@ -10,8 +10,16 @@ using Nan::New;
 using Nan::Set;
 
 NAN_MODULE_INIT(InitAll) {
-  Set(target, New<String>("addItem").ToLocalChecked(), GetFunction(New<FunctionTemplate>(AddItem)).ToLocalChecked());
-  Set(target, New<String>("removeItems").ToLocalChecked(), GetFunction(New<FunctionTemplate>(RemoveItems)).ToLocalChecked());
+  Set(
+    target,
+    New<String>("addItems").ToLocalChecked(),
+    GetFunction(New<FunctionTemplate>(AddItems)).ToLocalChecked()
+  );
+  Set(
+    target,
+    New<String>("removeItems").ToLocalChecked(),
+    GetFunction(New<FunctionTemplate>(RemoveItems)).ToLocalChecked()
+  );
 }
 
 NODE_MODULE(addon, InitAll)

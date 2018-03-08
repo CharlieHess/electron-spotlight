@@ -3,53 +3,56 @@
 #include <nan.h>
 #include "spotlight.h"
 
-NAN_METHOD(AddItem) {
-  if (info.Length() < 2) {
+NAN_METHOD(AddItems) {
+  if (info.Length() < 1) {
     Nan::ThrowTypeError("Missing arguments");
     return;
   }
 
-  if (!info[0]->IsString()) {
-    Nan::ThrowTypeError("Id must be a string");
+  if (!info[0]->IsArray()) {
+    Nan::ThrowTypeError("Items must be an array");
     return;
   }
 
-  if (!info[1]->IsString()) {
-    Nan::ThrowTypeError("Title must be a string");
-    return;
-  }
+  v8::Local<v8::Array> inputItems = v8::Local<v8::Array>::Cast(info[0]);
+  NSMutableArray *items = [[NSMutableArray alloc] init];
 
-  if (![CSSearchableIndex isIndexingAvailable]) {
-    Nan::ThrowTypeError("Spotlight indexing unavailable");
-    return;
-  }
+  for (unsigned int i = 0; i < inputItems->Length(); i++ ) {
+    if (!Nan::Has(inputItems, i).FromJust()) continue;
 
-  Nan::Utf8String idString(info[0]);
-  Nan::Utf8String titleString(info[1]);
+    v8::Local<v8::Object> inputItem = Nan::Get(inputItems, i)
+      .ToLocalChecked()
+      .As<v8::Object>();
 
-  NSString* identifier = [NSString stringWithUTF8String:*idString];
-  NSString* title = [NSString stringWithUTF8String:*titleString];
+    Nan::Utf8String idString(
+      Nan::Get(inputItem, Nan::New("id").ToLocalChecked()
+    ).ToLocalChecked());
 
-  CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc]
+    Nan::Utf8String titleString(
+      Nan::Get(inputItem, Nan::New("title").ToLocalChecked()
+    ).ToLocalChecked());
+
+    NSString* identifier = [NSString stringWithUTF8String:*idString];
+    NSString* title = [NSString stringWithUTF8String:*titleString];
+
+    CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc]
     initWithItemContentType:(NSString *)kUTTypeData];
+    attributeSet.title = title;
 
-  attributeSet.title = title;
+    CSSearchableItem *item = [[CSSearchableItem alloc]
+      initWithUniqueIdentifier:identifier
+      domainIdentifier:identifier
+      attributeSet:attributeSet];
 
-  NSLog(@"Created attribute set %@", attributeSet.title);
+    [items addObject:item];
+  }
 
-  CSSearchableItem *item = [[CSSearchableItem alloc]
-    initWithUniqueIdentifier:identifier
-    domainIdentifier:identifier
-    attributeSet:attributeSet];
-
-  NSLog(@"Created searchable item %@", item.domainIdentifier);
-
-  [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[item]
+  [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:items
     completionHandler: ^(NSError * __nullable error) {
       if (!error) {
-        NSLog(@"Search item indexed");
+        NSLog(@"Search items indexed");
       } else {
-        NSLog(@"Indexing item failed: %@", error);
+        NSLog(@"Indexing items failed: %@", error);
       }
   }];
 
