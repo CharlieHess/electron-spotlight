@@ -13,6 +13,7 @@ import { addItems } from 'electron-spotlight';
 addItems([{
   id: 'your-unique-identifier',
   title: 'Title In Spotlight',
+  contentDescription: `Description for item`,
   icon: 'https://pbs.twimg.com/media/CdlFCYmXIAAGkiH.jpg'
 }])
 ```
@@ -26,6 +27,7 @@ Index items within Spotlight. Maps to [`indexSearchableItems`](https://developer
 export interface SearchItem {
   id: string;
   title: string;
+  contentDescription: string;
   icon?: string;
 }
 ```
