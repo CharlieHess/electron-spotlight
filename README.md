@@ -27,7 +27,9 @@ Index items within Spotlight. Maps to [`indexSearchableItems`](https://developer
 export interface SearchItem {
   id: string;
   title: string;
-  contentDescription: string;
+  displayName?: string;
+  contentDescription?: string;
+  domainIdentifier?: string;
   icon?: string;
 }
 ```
