@@ -36,12 +36,30 @@ NAN_METHOD(AddItems) {
       Nan::Get(inputItem, Nan::New("title").ToLocalChecked()
     ).ToLocalChecked());
 
+    Nan::Utf8String contentDescriptionString(
+      Nan::Get(inputItem, Nan::New("contentDescription").ToLocalChecked()
+    ).ToLocalChecked());
+
+    Nan::Utf8String domainIdentifierString(
+      Nan::Get(inputItem, Nan::New("domainIdentifier").ToLocalChecked()
+    ).ToLocalChecked());
+
+    Nan::Utf8String displayNameString(
+      Nan::Get(inputItem, Nan::New("displayName").ToLocalChecked()
+    ).ToLocalChecked());
+
     NSString* identifier = [NSString stringWithUTF8String:*idString];
     NSString* title = [NSString stringWithUTF8String:*titleString];
+    NSString* contentDescription = [NSString stringWithUTF8String:*contentDescriptionString];
+    NSString* domainIdentifier = [NSString stringWithUTF8String:*domainIdentifierString];
+    NSString* displayName = [NSString stringWithUTF8String:*displayNameString];
 
     CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc]
       initWithItemContentType:(NSString *)kUTTypeData];
     attributeSet.title = title;
+    attributeSet.contentDescription = contentDescription;
+    attributeSet.domainIdentifier = domainIdentifier;
+    attributeSet.displayName = displayName;
 
     MaybeLocal<Value> iconHandle = Nan::Get(inputItem, Nan::New("icon").ToLocalChecked());
     if (!iconHandle.IsEmpty()
